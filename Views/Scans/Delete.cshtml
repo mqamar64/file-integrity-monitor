@@ -1,0 +1,32 @@
+@model FileIntegrityMonitor.Models.ScanRecord
+@{
+    ViewData["Title"] = "Delete Scan";
+}
+
+<div class="page-header">
+    <h1>Delete Scan</h1>
+    <p class="subtitle">This action cannot be undone.</p>
+</div>
+
+<div class="card" style="max-width:500px;">
+    <p style="color:var(--muted); margin-bottom:1rem; font-size:.9rem;">
+        Are you sure you want to delete this scan and all its file records?
+    </p>
+
+    <div class="meta-card" style="margin-bottom:1.25rem;">
+        <p><strong>ID</strong> #@Model.ScanId</p>
+        <p><strong>Name</strong> @Model.Name</p>
+        <p><strong>Directory</strong> @Model.RootPath</p>
+        <p><strong>Type</strong>
+            <span class="status-badge @(Model.IsBaseline ? "badge-baseline" : "badge-regular")">
+                @(Model.IsBaseline ? "Baseline" : "Regular Scan")
+            </span>
+        </p>
+    </div>
+
+    <form asp-action="Delete" method="post" style="display:flex; gap:.75rem; align-items:center;">
+        <input type="hidden" name="id" value="@Model.ScanId" />
+        <button type="submit" class="danger">Delete</button>
+        <a asp-action="Index" class="btn-back" style="margin-top:0;">Cancel</a>
+    </form>
+</div>

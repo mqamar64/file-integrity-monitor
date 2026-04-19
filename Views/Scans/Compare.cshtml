@@ -1,0 +1,68 @@
+@model FileIntegrityMonitor.Models.CompareViewModel
+@{
+    ViewData["Title"] = "Comparison Results";
+}
+
+<div class="page-header">
+    <h1>Comparison Results</h1>
+    <p class="subtitle">Changes detected between the baseline and the current scan.</p>
+</div>
+
+<div class="cards">
+    <div class="card stat-card">
+        <h3>New</h3>
+        <p class="stat-value">@Model.NewCount</p>
+    </div>
+    <div class="card stat-card">
+        <h3>Deleted</h3>
+        <p class="stat-value">@Model.DeletedCount</p>
+    </div>
+    <div class="card stat-card">
+        <h3>Modified</h3>
+        <p class="stat-value">@Model.ModifiedCount</p>
+    </div>
+    <div class="card stat-card">
+        <h3>Unchanged</h3>
+        <p class="stat-value">@Model.UnchangedCount</p>
+    </div>
+</div>
+
+<div class="meta-card">
+    <p><strong>Baseline</strong> @Model.Baseline?.Name (#@Model.Baseline?.ScanId)</p>
+    <p><strong>Current Scan</strong> @Model.CurrentScan?.Name (#@Model.CurrentScan?.ScanId)</p>
+    <p><strong>Directory</strong> @Model.CurrentScan?.RootPath</p>
+</div>
+
+<div class="section-header">
+    <h2>File Changes</h2>
+</div>
+
+<div class="table-wrap">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Path</th>
+                <th>Status</th>
+                <th>Old Size</th>
+                <th>New Size</th>
+                <th>Old Hash</th>
+                <th>New Hash</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var row in Model.Rows)
+        {
+            <tr class="status-@row.Status.ToLower()">
+                <td><span class="path-cell" title="@row.FilePath">@row.FilePath</span></td>
+                <td>
+                    <span class="status-badge badge-@row.Status.ToLower()">@row.Status</span>
+                </td>
+                <td style="color:var(--muted);">@(row.OldSize?.ToString() ?? "—")</td>
+                <td style="color:var(--muted);">@(row.NewSize?.ToString() ?? "—")</td>
+                <td><span class="hash-cell" title="@row.OldHash">@(row.OldHash != null ? row.OldHash.Substring(0, Math.Min(16, row.OldHash.Length)) + "…" : "—")</span></td>
+                <td><span class="hash-cell" title="@row.NewHash">@(row.NewHash != null ? row.NewHash.Substring(0, Math.Min(16, row.NewHash.Length)) + "…" : "—")</span></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

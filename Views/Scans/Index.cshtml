@@ -1,0 +1,72 @@
+@model FileIntegrityMonitor.Models.ScanSummaryViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <p class="subtitle">Monitor baselines, scans, and file integrity changes.</p>
+</div>
+
+<div class="cards">
+    <div class="card stat-card">
+        <h3>Total Scans</h3>
+        <p class="stat-value">@Model.TotalScans</p>
+    </div>
+    <div class="card stat-card">
+        <h3>Baselines</h3>
+        <p class="stat-value">@Model.TotalBaselines</p>
+    </div>
+    <div class="card stat-card">
+        <h3>Regular Scans</h3>
+        <p class="stat-value">@Model.TotalRegularScans</p>
+    </div>
+</div>
+
+<div class="section-header">
+    <h2>Recent Scans</h2>
+</div>
+
+<div class="table-wrap">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Path</th>
+                <th>Type</th>
+                <th>Created</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        @if (Model.RecentScans.Any())
+        {
+            @foreach (var scan in Model.RecentScans)
+            {
+                <tr>
+                    <td style="color:var(--muted); font-size:.82rem;">@scan.ScanId</td>
+                    <td style="font-weight:600;">@scan.Name</td>
+                    <td><span class="path-cell" title="@scan.RootPath">@scan.RootPath</span></td>
+                    <td>
+                        <span class="status-badge @(scan.IsBaseline ? "badge-baseline" : "badge-regular")">
+                            @(scan.IsBaseline ? "Baseline" : "Regular")
+                        </span>
+                    </td>
+                    <td style="color:var(--muted); font-size:.82rem;">@scan.CreatedTime</td>
+                    <td>
+                        <a class="action-link" asp-action="Details" asp-route-id="@scan.ScanId">Details</a>
+                        <a class="action-link danger" asp-action="Delete" asp-route-id="@scan.ScanId">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="empty-state">No scans yet. Create a baseline to get started.</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

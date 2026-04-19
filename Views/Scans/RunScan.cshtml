@@ -1,0 +1,29 @@
+@model FileIntegrityMonitor.Models.CreateScanViewModel
+@{
+    ViewData["Title"] = "Run Scan";
+}
+
+<div class="page-header">
+    <h1>Run Scan</h1>
+    <p class="subtitle">Scan a directory and compare it against its most recent baseline.</p>
+</div>
+
+<form asp-action="RunScan" method="post" class="form-card">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <label asp-for="Name">Scan Name</label>
+    <input asp-for="Name" class="form-control" placeholder="e.g. After dependency update" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+
+    <label asp-for="RootPath">Directory Path</label>
+    <input asp-for="RootPath" class="form-control" placeholder="e.g. C:\Users\you\Documents\MyProject" />
+    <p class="form-hint">Must match the path used when creating the baseline.</p>
+    <span asp-validation-for="RootPath" class="text-danger"></span>
+
+    <button type="submit">Run Scan</button>
+    <a asp-action="Index" class="btn-back">← Back to Dashboard</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

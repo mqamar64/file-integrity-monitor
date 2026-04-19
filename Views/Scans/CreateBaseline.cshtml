@@ -1,0 +1,29 @@
+@model FileIntegrityMonitor.Models.CreateScanViewModel
+@{
+    ViewData["Title"] = "Create Baseline";
+}
+
+<div class="page-header">
+    <h1>Create Baseline</h1>
+    <p class="subtitle">Scan a directory and save its current state as a trusted reference.</p>
+</div>
+
+<form asp-action="CreateBaseline" method="post" class="form-card">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <label asp-for="Name">Baseline Name</label>
+    <input asp-for="Name" class="form-control" placeholder="e.g. Pre-deployment snapshot" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+
+    <label asp-for="RootPath">Directory Path</label>
+    <input asp-for="RootPath" class="form-control" placeholder="e.g. C:\Users\you\Documents\MyProject" />
+    <p class="form-hint">Enter the full path to the folder you want to monitor.</p>
+    <span asp-validation-for="RootPath" class="text-danger"></span>
+
+    <button type="submit">Create Baseline</button>
+    <a asp-action="Index" class="btn-back">← Back to Dashboard</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

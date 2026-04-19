@@ -1,0 +1,127 @@
+@model FileIntegrityMonitor.Models.ScanDetailsViewModel
+@{
+    ViewData["Title"] = "Scan Details";
+}
+
+<div class="page-header">
+    <h1>Scan Details</h1>
+</div>
+
+@if (Model.Scan != null)
+{
+    <div class="meta-card">
+        <p><strong>ID</strong> #@Model.Scan.ScanId</p>
+        <p><strong>Name</strong> @Model.Scan.Name</p>
+        <p><strong>Directory</strong> @Model.Scan.RootPath</p>
+        <p><strong>Type</strong>
+            <span class="status-badge @(Model.Scan.IsBaseline ? "badge-baseline" : "badge-regular")">
+                @(Model.Scan.IsBaseline ? "Baseline" : "Regular Scan")
+            </span>
+        </p>
+        <p><strong>Created</strong> @Model.Scan.CreatedTime</p>
+        @if (Model.BaselineScan != null)
+        {
+            <p><strong>Compared Against</strong> @Model.BaselineScan.Name (#@Model.BaselineScan.ScanId)</p>
+        }
+    </div>
+}
+
+@if (Model.Scan != null && !Model.Scan.IsBaseline && Model.HasComparison)
+{
+    <div class="section-header" style="margin-top:1.5rem;">
+        <h2>Comparison Summary</h2>
+    </div>
+
+    <div class="cards">
+        <div class="card stat-card">
+            <h3>New</h3>
+            <p class="stat-value">@Model.NewCount</p>
+        </div>
+        <div class="card stat-card">
+            <h3>Deleted</h3>
+            <p class="stat-value">@Model.DeletedCount</p>
+        </div>
+        <div class="card stat-card">
+            <h3>Modified</h3>
+            <p class="stat-value">@Model.ModifiedCount</p>
+        </div>
+        <div class="card stat-card">
+            <h3>Unchanged</h3>
+            <p class="stat-value">@Model.UnchangedCount</p>
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h2>Changed Files</h2>
+    </div>
+
+    <div class="table-wrap" style="margin-bottom:1.75rem;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Path</th>
+                    <th>Status</th>
+                    <th>Old Size</th>
+                    <th>New Size</th>
+                    <th>Old Hash</th>
+                    <th>New Hash</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var row in Model.ComparisonRows)
+            {
+                <tr class="status-@row.Status.ToLower()">
+                    <td><span class="path-cell" title="@row.FilePath">@row.FilePath</span></td>
+                    <td><span class="status-badge badge-@row.Status.ToLower()">@row.Status</span></td>
+                    <td style="color:var(--muted);">@(row.OldSize?.ToString() ?? "—")</td>
+                    <td style="color:var(--muted);">@(row.NewSize?.ToString() ?? "—")</td>
+                    <td><span class="hash-cell" title="@row.OldHash">@(row.OldHash != null ? row.OldHash.Substring(0, Math.Min(16, row.OldHash.Length)) + "…" : "—")</span></td>
+                    <td><span class="hash-cell" title="@row.NewHash">@(row.NewHash != null ? row.NewHash.Substring(0, Math.Min(16, row.NewHash.Length)) + "…" : "—")</span></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+else if (Model.Scan != null && !Model.Scan.IsBaseline)
+{
+    <div class="alert error" style="margin-top:1.25rem;">
+        No baseline comparison available for this scan.
+    </div>
+}
+else if (Model.Scan != null && Model.Scan.IsBaseline)
+{
+    <div class="alert success" style="margin-top:1.25rem;">
+        This is a baseline scan. Comparison data appears when you view a regular scan run against it.
+    </div>
+}
+
+<div class="section-header" style="margin-top:1.5rem;">
+    <h2>All Tracked Files</h2>
+</div>
+
+<div class="table-wrap">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>File Path</th>
+                <th>Size (bytes)</th>
+                <th>Hash</th>
+                <th>Last Modified</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var file in Model.Files)
+        {
+            <tr>
+                <td><span class="path-cell" title="@file.FilePath">@file.FilePath</span></td>
+                <td style="color:var(--muted); font-size:.82rem;">@file.FileSize</td>
+                <td><span class="hash-cell" title="@file.Hash">@file.Hash</span></td>
+                <td style="color:var(--muted); font-size:.82rem;">@file.LastWriteTime</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<a asp-action="Index" class="btn-back">← Back to Dashboard</a>
